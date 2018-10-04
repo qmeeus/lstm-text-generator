@@ -1,5 +1,5 @@
 import argparse
-from logger import logger
+from utils.logger import logger
 
 
 def parse_arg():
@@ -20,4 +20,8 @@ def main():
     else:
         raise NotImplementedError
 
+    main()
+
+
+if __name__ == '__main__':
     main()

@@ -1,4 +1,4 @@
-FROM tensorflow/tensorflow:nightly-devel-py3
+FROM tensorflow/tensorflow:nightly-devel-gpu-py3
 
 RUN apt update && \
     apt-get install python3-matplotlib -y && \

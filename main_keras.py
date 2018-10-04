@@ -6,63 +6,17 @@ from keras.layers import LSTM
 from keras.callbacks import ModelCheckpoint
 from keras.utils import np_utils
 
-from logger import logger
-
-
-class Config:
-    # INPUT AND OUTPUT FILES
-
-    directory = "data/"
-    data = "wonderland.txt"
-    encoding = 'utf-8'
-    dictionary = "dictionary.pkl"
-    features = "features"
-    target = "target"
-    checkpoint = 'model_checkpoint'
-
-    # NETWORK SETTINGS
-
-    window = 100
-    offset = 3
-    neurons = 256
-    keep_prob = 0.2
-
-    # OPTMIZATION
-
-    loss = 'categorical_crossentropy'
-    optimizer = 'adam'
-    learning_rate = 0.005
-    clip_gradients = 5
-
-    # TRAINING
-
-    n_epochs = 20
-    validation_size = 0.1
-    batch_size = 128
-
-    # TESTING
-
-    temperatures = (0.0, 0.5, 0.75)
-    sample_length = 1000
-
-    def save_path(self, attr):
-        return self.directory + getattr(self, attr)
+from utils.data import load
+from utils.logger import logger
+from config import Wonderland as Config
 
 
 def main():
     config = Config()
-    data = load_data(config)
+    data = load(config)
     X, y = preprocessing(data, config)
     model, callbacks = build_model(X, y, config)
     train(model, X, y, callbacks, config)
-
-
-def load_data(config):
-    # load ascii text and covert to lowercase
-    with open(config.save_path('data')) as file:
-        raw_text = file.read()
-        raw_text = raw_text.lower()
-    return raw_text
 
 
 def preprocessing(data, config):

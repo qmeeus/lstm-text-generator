@@ -3,48 +3,8 @@ import pickle
 import numpy as np
 import tflearn
 
-from logger import logger
-
-
-class Config:
-
-    # INPUT AND OUTPUT FILES
-
-    directory = "data/"
-    data = "copperfield.txt"
-    encoding = 'utf-8-sig'
-    dictionary = "dictionary.pkl"
-    features = "features"
-    target = "target"
-    checkpoint = 'model_checkpoint'
-
-    # NETWORK SETTINGS
-
-    window = 30
-    offset = 3
-    neurons = 512
-    keep_prob = 0.5
-
-    # OPTMIZATION
-
-    loss = 'categorical_crossentropy'
-    optimizer = 'adam'
-    learning_rate = 0.005
-    clip_gradients = 5
-
-    # TRAINING
-
-    n_epochs = 50
-    validation_size = 0.1
-    batch_size = 64
-
-    # TESTING
-
-    temperatures = (0.0, 0.5, 0.75)
-    sample_length = 1000
-
-    def save_path(self, attr):
-        return self.directory + getattr(self, attr)
+from utils.logger import logger
+from config import Copperfield as Config
 
 
 def main():
