@@ -1,13 +1,9 @@
 import numpy as np
-from keras.models import Sequential
-from keras.layers import Dense
-from keras.layers import Dropout
-from keras.layers import LSTM
-from keras.callbacks import ModelCheckpoint
 
+from config import Wonderland as Config
 from utils.data import load, preprocessing
 from utils.logger import logger
-from config import Wonderland as Config
+from main_keras import build_model
 
 
 def main():
@@ -15,27 +11,7 @@ def main():
     data = load(config)
     X, y, chars, dataX, dataY = preprocessing(data, config)
     model, callbacks = build_model(X, y, config)
-    train(model, X, y, callbacks, config)
     generate(model, dataX, chars)
-
-
-def build_model(X, y, config):
-    # define the LSTM model
-    model = Sequential()
-    model.add(LSTM(config.neurons, input_shape=(X.shape[1], X.shape[2])))
-    model.add(Dropout(config.keep_prob))
-    model.add(Dense(y.shape[1], activation='softmax'))
-    model.compile(loss=config.loss, optimizer=config.optimizer)
-
-    # define the checkpoint
-    filepath = config.save_path("checkpoint")
-    checkpoint = ModelCheckpoint(filepath, monitor='loss', verbose=1, save_best_only=True, mode='min')
-    callbacks_list = [checkpoint]
-    return model, callbacks_list
-
-
-def train(model, X, y, callbacks, config):
-    model.fit(X, y, epochs=config.n_epochs, batch_size=config.batch_size, callbacks=callbacks)
 
 
 def generate(model, dataX, chars):
@@ -68,8 +44,3 @@ def generate(model, dataX, chars):
 
     logger.info("".join(sample))
     logger.info("Done.")
-
-
-
-if __name__ == '__main__':
-    main()

@@ -16,7 +16,7 @@ class Wonderland(Config):
     dictionary = "dictionary.pkl"
     features = "features"
     target = "target"
-    checkpoint = 'model_checkpoint'
+    checkpoint = '"weights-improvement-{epoch:02d}-{loss:.4f}.hdf5"'
 
     # NETWORK SETTINGS
 

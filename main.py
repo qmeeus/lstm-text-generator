@@ -4,7 +4,7 @@ from utils.logger import logger
 
 def parse_arg():
     parser = argparse.ArgumentParser()
-    parser.add_argument('library', choices=['keras', 'tflearn'])
+    parser.add_argument('library', choices=['keras', 'tflearn', 'generate'])
     args = parser.parse_args()
     return args
 
@@ -17,6 +17,8 @@ def main():
     elif args.library == 'tflearn':
         logger.info('Using tflearn')
         from main_tflearn import main
+    elif args.library == 'generate':
+        from main_generate import main
     else:
         raise NotImplementedError
 
