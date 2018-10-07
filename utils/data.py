@@ -3,10 +3,18 @@ from keras.utils import np_utils
 
 from utils.logger import logger
 
+
+def clean(text):
+    to_replace = ["\u2018", "\u2019", "“", "”"]
+    for char in to_replace:
+        text = text.replace(char, '"')
+    return text
+
+
 def load(config):
     with open(config.save_path('data'), 'r', encoding=config.encoding) as f:
         data = f.read().lower()
-    return data
+    return clean(data)
 
 
 def preprocessing(data, config):

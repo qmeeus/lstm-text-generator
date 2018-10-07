@@ -1,28 +1,30 @@
 import argparse
-from utils.logger import logger
+from utils.data import load, preprocessing
+from model import build_model, train, generate
 
 
 def parse_arg():
     parser = argparse.ArgumentParser()
-    parser.add_argument('library', choices=['keras', 'tflearn', 'generate'])
+    parser.add_argument('book', choices=['wonderland', 'copperfield'])
     args = parser.parse_args()
     return args
 
 
 def main():
     args = parse_arg()
-    if args.library == 'keras':
-        logger.info('Using keras')
-        from main_keras import main
-    elif args.library == 'tflearn':
-        logger.info('Using tflearn')
-        from main_tflearn import main
-    elif args.library == 'generate':
-        from main_generate import main
+    if args.book == 'wonderland':
+        from config import Wonderland as Config
+    elif args.book == 'copperfield':
+        from config import Copperfield as Config
     else:
         raise NotImplementedError
 
-    main()
+    config = Config()
+    data = load(config)
+    X, y, chars, dataX, dataY = preprocessing(data, config)
+    model, callbacks = build_model(X, y, config)
+    train(model, X, y, callbacks, config)
+    generate(model, dataX, chars, config)
 
 
 if __name__ == '__main__':

@@ -5,8 +5,8 @@ class Config:
     directory = "data/"
 
     def save_path(self, attr):
-        return self.directory + getattr(self, attr)
-
+        filename = attr if not hasattr(self, attr) else getattr(self, attr)
+        return self.directory + filename
 
 class Wonderland(Config):
     # INPUT AND OUTPUT FILES
@@ -16,7 +16,7 @@ class Wonderland(Config):
     dictionary = "dictionary.pkl"
     features = "features"
     target = "target"
-    checkpoint = '"weights-improvement-{epoch:02d}-{loss:.4f}.hdf5"'
+    checkpoint = "weights-improvement-{epoch:02d}-{loss:.4f}.hdf5"
 
     # NETWORK SETTINGS
 
