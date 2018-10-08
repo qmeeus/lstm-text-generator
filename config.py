@@ -1,16 +1,10 @@
 
 
-class Config:
+class DefaultConfig:
 
-    directory = "data/"
-
-    def save_path(self, attr):
-        filename = attr if not hasattr(self, attr) else getattr(self, attr)
-        return self.directory + filename
-
-class Wonderland(Config):
     # INPUT AND OUTPUT FILES
-
+    data_directory = "data/"
+    model_directory = "models/"
     data = "wonderland.txt"
     encoding = 'utf-8-sig'
     dictionary = "dictionary.pkl"
@@ -40,11 +34,14 @@ class Wonderland(Config):
 
     # TESTING
 
-    temperatures = (0.0, 0.5, 0.75)
     sample_length = 1000
 
+    def save_path(self, attr):
+        filename = attr if not hasattr(self, attr) else getattr(self, attr)
+        return self.model_directory + filename
 
-class Copperfield:
+
+class Copperfield(DefaultConfig):
 
     # INPUT AND OUTPUT FILES
 
@@ -77,5 +74,4 @@ class Copperfield:
 
     # TESTING
 
-    temperatures = (0.0, 0.5, 0.75)
     sample_length = 1000

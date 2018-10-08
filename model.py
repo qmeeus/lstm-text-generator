@@ -6,18 +6,8 @@ from keras.layers import Dropout
 from keras.layers import LSTM
 from keras.callbacks import ModelCheckpoint
 
-from utils.data import load, preprocessing
 from utils.logger import logger
-from config import Wonderland as Config
 
-
-def main():
-    config = Config()
-    data = load(config)
-    X, y, chars, dataX, dataY = preprocessing(data, config)
-    model, callbacks = build_model(X, y, config)
-    train(model, X, y, callbacks, config)
-    generate(model, dataX, chars)
 
 
 def build_model(X, y, config):
@@ -73,8 +63,3 @@ def generate(model, dataX, chars, config):
 
     logger.info("".join(sample))
     logger.info("Done.")
-
-
-
-if __name__ == '__main__':
-    main()

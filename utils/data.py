@@ -1,6 +1,5 @@
 import numpy as np
 from keras.utils import np_utils
-
 from utils.logger import logger
 
 
@@ -11,8 +10,8 @@ def clean(text):
     return text
 
 
-def load(config):
-    with open(config.save_path('data'), 'r', encoding=config.encoding) as f:
+def load(text_file):
+    with open(text_file, 'r', encoding=config.encoding) as f:
         data = f.read().lower()
     return clean(data)
 

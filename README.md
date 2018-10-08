@@ -18,6 +18,7 @@ The model is built on two freely available books from the [gutenberg project](ht
 - [David Copperfield by Charles Dickens](http://www.gutenberg.org/ebooks/766).
 
 To add your own data, just move the text file to `data` and specify the name of the file with the extension when training the model.
+If necessary, add your own configuration in `config.py`.
 
 ## Installation
 To build the container with CPU support, simply run the following command from a system with docker installed:

@@ -5,7 +5,8 @@ from model import build_model, train, generate
 
 def parse_arg():
     parser = argparse.ArgumentParser()
-    parser.add_argument('book', choices=['wonderland', 'copperfield'])
+    parser.add_argument('book', type=str)
+    parser.add_argument('--config', type=str)
     args = parser.parse_args()
     return args
 
@@ -13,7 +14,7 @@ def parse_arg():
 def main():
     args = parse_arg()
     if args.book == 'wonderland':
-        from config import Wonderland as Config
+        from config import DefaultConfig as Config
     elif args.book == 'copperfield':
         from config import Copperfield as Config
     else:
