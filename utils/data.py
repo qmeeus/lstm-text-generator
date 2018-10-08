@@ -10,8 +10,9 @@ def clean(text):
     return text
 
 
-def load(text_file):
-    with open(text_file, 'r', encoding=config.encoding) as f:
+def load(config):
+    filename = config.data_directory + config.data
+    with open(filename, 'r', encoding=config.encoding) as f:
         data = f.read().lower()
     return clean(data)
 
