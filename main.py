@@ -6,7 +6,7 @@ from model import build_model, train, generate
 def parse_arg():
     parser = argparse.ArgumentParser()
     parser.add_argument('book', type=str)
-    parser.add_argument('--config', type=str)
+    parser.add_argument('--configs', type=str)
     args = parser.parse_args()
     return args
 
