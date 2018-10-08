@@ -4,7 +4,7 @@ Inspired from [this article](https://machinelearningmastery.com/text-generation-
 
 ## Objective
 The objective of this project is to explore techniques for automatic text generation using LSTM recurrent neural networks.
-The current implementation uses [keras](https://keras.io/) but it might move to a pure tensorflow implementation at some point and follow the best practices and structures developed in [this template](https://github.com/MrGemy95/Tensorflow-Project-Template).
+The current implementation uses [keras](https://keras.io/) but it might move to a pure tensorflow implementation at some point and follow the best practices and structures laid out in [this template](https://github.com/MrGemy95/Tensorflow-Project-Template).
 
 A [docker](https://docker.com/) container is provided for the project portability. I might explore possibilities of deployment using [Kubeflow](https://www.kubeflow.org/) as well.
 
