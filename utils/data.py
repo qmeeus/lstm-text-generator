@@ -1,5 +1,6 @@
 import numpy as np
-from keras.utils import np_utils
+# from keras.utils import np_utils
+# import tensorflow as tf
 from utils.logger import logger
 
 
@@ -44,6 +45,11 @@ def preprocessing(data, config):
     # normalize
     X = X / float(n_vocab)
     # one hot encode the output variable
-    y = np_utils.to_categorical(dataY)
+    # y = np_utils.to_categorical(dataY)
+    y = one_hot(dataY, n_vocab)
 
     return X, y, chars, dataX, dataY
+
+
+def one_hot(a, num_classes):
+    return np.squeeze(np.eye(num_classes)[a.reshape(-1)])
