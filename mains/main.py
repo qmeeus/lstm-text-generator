@@ -29,6 +29,8 @@ n_words = 0
 MAX_LABEL = 15
 WORDS_FEATURE = 'words'  # Name of the input words feature.
 
+TRAINING_STEPS = 1000
+
 
 def estimator_spec_for_softmax_classification(logits, labels, mode):
     """Returns EstimatorSpec instance for softmax classification."""
@@ -142,7 +144,7 @@ def main(unused_argv):
         batch_size=len(x_train),
         num_epochs=None,
         shuffle=True)
-    classifier.train(input_fn=train_input_fn, steps=100)
+    classifier.train(input_fn=train_input_fn, steps=TRAINING_STEPS)
 
     # Predict.
     test_input_fn = tf.estimator.inputs.numpy_input_fn(
