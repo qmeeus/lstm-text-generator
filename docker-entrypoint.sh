@@ -1,4 +1,4 @@
 #!/bin/sh
 
 exec tensorboard --logdir ./logs &
-exec python3 main.py "$@"
+exec python3 -m mains/main.py "$@"
