@@ -5,10 +5,9 @@ from keras.layers import Dense
 from keras.layers import Dropout
 from keras.layers import LSTM
 from keras.callbacks import ModelCheckpoint
-import tensorflow as tf
-from tensorflow.contrib import rnn
 from utils.logger import logger
 
+# TODO: Turn to class using tf.estimator API
 
 
 def build_model(X, y, config):
@@ -32,7 +31,7 @@ def train(model, X, y, callbacks, config):
     model.fit(X, y, epochs=config.n_epochs, batch_size=config.batch_size, callbacks=callbacks)
 
 
-def generate(model, dataX, chars, config):
+def generate(model, dataX, chars, config, length=1000):
     prefix = config.checkpoint[:config.checkpoint.index("{")]
     weights_files = sorted([f for f in os.listdir(config.directory) if f.startswith(prefix)])
     # load the network weights
@@ -50,7 +49,7 @@ def generate(model, dataX, chars, config):
     sample = []
 
     # generate characters
-    for i in range(1000):
+    for i in range(length):
         x = np.reshape(pattern, (1, len(pattern), 1))
         x = x / float(n_vocab)
         prediction = model.predict(x, verbose=0)
@@ -65,21 +64,3 @@ def generate(model, dataX, chars, config):
     logger.info("".join(sample))
     logger.info("Done.")
 
-
-def RNN(x, weights, biases):
-
-    # Prepare data shape to match `rnn` function requirements
-    # Current data input shape: (batch_size, timesteps, n_input)
-    # Required shape: 'timesteps' tensors list of shape (batch_size, n_input)
-
-    # Unstack to get a list of 'timesteps' tensors of shape (batch_size, n_input)
-    x = tf.unstack(x, timesteps, 1)
-
-    # Define a lstm cell with tensorflow
-    lstm_cell = rnn.BasicLSTMCell(num_hidden, forget_bias=1.0)
-
-    # Get lstm cell output
-    outputs, states = rnn.static_rnn(lstm_cell, x, dtype=tf.float32)
-
-    # Linear activation, using rnn inner loop last output
-    return tf.matmul(outputs[-1], weights['out']) + biases['out']

@@ -21,6 +21,10 @@ import pandas
 from sklearn import metrics
 import tensorflow as tf
 
+# TODO: Turn into robust and scalable model builder
+# TODO: Check tf.app.run(main, argv)
+# TODO: Check this for migration instructions
+# TODO: https://github.com/tensorflow/tensorflow/blob/master/tensorflow/contrib/learn/README.md
 FLAGS = None
 
 MAX_DOCUMENT_LENGTH = 10
@@ -34,6 +38,7 @@ TRAINING_STEPS = 10000
 
 def estimator_spec_for_softmax_classification(logits, labels, mode):
     """Returns EstimatorSpec instance for softmax classification."""
+    # TODO: Move to Trainer class
     predicted_classes = tf.argmax(logits, 1)
     if mode == tf.estimator.ModeKeys.PREDICT:
         return tf.estimator.EstimatorSpec(
@@ -100,10 +105,13 @@ def rnn_model(features, labels, mode):
 
 
 def main(unused_argv):
+    # TODO: Turn into Trainer / Data / main
     global n_words
     tf.logging.set_verbosity(tf.logging.INFO)
 
     # Prepare training and testing data
+    # TODO: load_dataset deprecated, use tf.data
+    # TODO: add support for other datasets (20newsgroup)
     dbpedia = tf.contrib.learn.datasets.load_dataset(
         'dbpedia', test_with_fake_data=FLAGS.test_with_fake_data)
     x_train = pandas.Series(dbpedia.train.data[:, 1])
@@ -111,7 +119,7 @@ def main(unused_argv):
     x_test = pandas.Series(dbpedia.test.data[:, 1])
     y_test = pandas.Series(dbpedia.test.target)
 
-    # Process vocabulary
+    # Process vocabulary TODO: VocabularyProcessor deprecated, use tf.data
     vocab_processor = tf.contrib.learn.preprocessing.VocabularyProcessor(
         MAX_DOCUMENT_LENGTH)
 
@@ -122,7 +130,7 @@ def main(unused_argv):
     x_test = np.array(list(x_transform_test))
 
     n_words = len(vocab_processor.vocabulary_)
-    print('Total words: %d' % n_words)
+    print('Total words: {}'.format(n_words))
 
     # Build model
     # Switch between rnn_model and bag_of_words_model to test different models.

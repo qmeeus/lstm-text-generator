@@ -3,6 +3,8 @@ import numpy as np
 # import tensorflow as tf
 from utils.logger import logger
 
+# TODO: Turn to class using tf.data API
+
 
 def clean(text):
     to_replace = ["\u2018", "\u2019", "“", "”"]
