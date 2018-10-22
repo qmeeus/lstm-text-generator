@@ -29,7 +29,7 @@ n_words = 0
 MAX_LABEL = 15
 WORDS_FEATURE = 'words'  # Name of the input words feature.
 
-TRAINING_STEPS = 1000
+TRAINING_STEPS = 10000
 
 
 def estimator_spec_for_softmax_classification(logits, labels, mode):
