@@ -22,7 +22,7 @@ from sklearn import metrics
 import tensorflow as tf
 
 import config.text_classification as config
-from models.text_classification import rnn_model, bag_of_words_model
+from models.text_classifier import gru_model, lstm_model, bag_of_words_model
 
 # TODO: Turn into robust and scalable model builder
 # TODO: Check tf.app.run(main, argv)
@@ -60,8 +60,8 @@ def main(unused_argv):
 
     # Build model
     # Switch between rnn_model and bag_of_words_model to test different models.
-    model_fn = rnn_model
-    if FLAGS.bow_model:
+    model_fn = gru_model
+    if FLAGS.model == "BOW":
         # Subtract 1 because VocabularyProcessor outputs a word-id matrix where word
         # ids start from 1 and 0 means 'no word'. But
         # categorical_column_with_identity assumes 0-based count and uses -1 for
@@ -69,6 +69,9 @@ def main(unused_argv):
         x_train -= 1
         x_test -= 1
         model_fn = bag_of_words_model
+    elif FLAGS.model == "LSTM":
+        model_fn = lstm_model
+
     classifier = tf.estimator.Estimator(model_fn=model_fn)
 
     # Train.
@@ -104,9 +107,8 @@ if __name__ == '__main__':
         help='Test the example code with fake data.',
         action='store_true')
     parser.add_argument(
-        '--bow_model',
-        default=False,
-        help='Run with BOW model instead of RNN.',
-        action='store_true')
+        '--model',
+        choices=["GRU", "LSTM", "BOW"],
+        help='Which model to use?')
     FLAGS, unparsed = parser.parse_known_args()
     tf.app.run(main=main, argv=[sys.argv[0]] + unparsed)
