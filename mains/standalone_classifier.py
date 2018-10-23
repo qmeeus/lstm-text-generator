@@ -21,93 +21,13 @@ import pandas
 from sklearn import metrics
 import tensorflow as tf
 
+import config.text_classification as config
+from models.text_classification import rnn_model, bag_of_words_model
+
 # TODO: Turn into robust and scalable model builder
 # TODO: Check tf.app.run(main, argv)
-# TODO: Check this for migration instructions
-# TODO: https://github.com/tensorflow/tensorflow/blob/master/tensorflow/contrib/learn/README.md
-FLAGS = None
-
-MAX_DOCUMENT_LENGTH = 10
-EMBEDDING_SIZE = 50
-n_words = 0
-MAX_LABEL = 15
-WORDS_FEATURE = 'words'  # Name of the input words feature.
-SAVE_EVERY_N_STEPS = 100
-TRAINING_STEPS = 10000
-
-
-def estimator_spec_for_softmax_classification(logits, labels, mode):
-    """Returns EstimatorSpec instance for softmax classification."""
-    # TODO: Move to Trainer class
-    predicted_classes = tf.argmax(logits, 1)
-    if mode == tf.estimator.ModeKeys.PREDICT:
-        return tf.estimator.EstimatorSpec(
-            mode=mode,
-            predictions={
-                'class': predicted_classes,
-                'prob': tf.nn.softmax(logits)
-            })
-
-    loss = tf.losses.sparse_softmax_cross_entropy(labels=labels, logits=logits)
-    if mode == tf.estimator.ModeKeys.TRAIN:
-        optimizer = tf.train.AdamOptimizer(learning_rate=0.01)
-        train_op = optimizer.minimize(loss, global_step=tf.train.get_global_step())
-        return tf.estimator.EstimatorSpec(mode, loss=loss, train_op=train_op)
-
-    eval_metric_ops = {
-        'accuracy':
-            tf.metrics.accuracy(labels=labels, predictions=predicted_classes)
-    }
-
-    summary_hook = tf.train.SummarySaverHook(
-        SAVE_EVERY_N_STEPS,
-        output_dir='/tmp/tf',
-        summary_op=tf.summary.merge_all())
-
-    return tf.estimator.EstimatorSpec(
-        mode=mode, loss=loss, eval_metric_ops=eval_metric_ops, training_hooks=[summary_hook])
-
-
-def bag_of_words_model(features, labels, mode):
-    """A bag-of-words model. Note it disregards the word order in the text."""
-    bow_column = tf.feature_column.categorical_column_with_identity(
-        WORDS_FEATURE, num_buckets=n_words)
-    bow_embedding_column = tf.feature_column.embedding_column(
-        bow_column, dimension=EMBEDDING_SIZE)
-    bow = tf.feature_column.input_layer(
-        features, feature_columns=[bow_embedding_column])
-    logits = tf.layers.dense(bow, MAX_LABEL, activation=None)
-
-    return estimator_spec_for_softmax_classification(
-        logits=logits, labels=labels, mode=mode)
-
-
-def rnn_model(features, labels, mode):
-    """RNN model to predict from sequence of words to a class."""
-    # Convert indexes of words into embeddings.
-    # This creates embeddings matrix of [n_words, EMBEDDING_SIZE] and then
-    # maps word indexes of the sequence into [batch_size, sequence_length,
-    # EMBEDDING_SIZE].
-    word_vectors = tf.contrib.layers.embed_sequence(
-        features[WORDS_FEATURE], vocab_size=n_words, embed_dim=EMBEDDING_SIZE)
-
-    # Split into list of embedding per word, while removing doc length dim.
-    # word_list results to be a list of tensors [batch_size, EMBEDDING_SIZE].
-    word_list = tf.unstack(word_vectors, axis=1)
-
-    # Create a Gated Recurrent Unit cell with hidden size of EMBEDDING_SIZE.
-    cell = tf.nn.rnn_cell.GRUCell(EMBEDDING_SIZE)
-
-    # Create an unrolled Recurrent Neural Networks to length of
-    # MAX_DOCUMENT_LENGTH and passes word_list as inputs for each unit.
-    _, encoding = tf.nn.static_rnn(cell, word_list, dtype=tf.float32)
-
-    # Given encoding of RNN, take encoding of last step (e.g hidden size of the
-    # neural network of last step) and pass it as features for softmax
-    # classification over output classes.
-    logits = tf.layers.dense(encoding, MAX_LABEL, activation=None)
-    return estimator_spec_for_softmax_classification(
-        logits=logits, labels=labels, mode=mode)
+# TODO: Check this for migration instructions:
+# https://github.com/tensorflow/tensorflow/blob/master/tensorflow/contrib/learn/README.md
 
 
 def main(unused_argv):
@@ -127,7 +47,7 @@ def main(unused_argv):
 
     # Process vocabulary TODO: VocabularyProcessor deprecated, use tf.data
     vocab_processor = tf.contrib.learn.preprocessing.VocabularyProcessor(
-        MAX_DOCUMENT_LENGTH)
+        config.MAX_DOCUMENT_LENGTH)
 
     x_transform_train = vocab_processor.fit_transform(x_train)
     x_transform_test = vocab_processor.transform(x_test)
@@ -153,16 +73,16 @@ def main(unused_argv):
 
     # Train.
     train_input_fn = tf.estimator.inputs.numpy_input_fn(
-        x={WORDS_FEATURE: x_train},
+        x={config.WORDS_FEATURE: x_train},
         y=y_train,
         batch_size=len(x_train),
         num_epochs=None,
         shuffle=True)
-    classifier.train(input_fn=train_input_fn, steps=TRAINING_STEPS)
+    classifier.train(input_fn=train_input_fn, steps=config.TRAINING_STEPS)
 
     # Predict.
     test_input_fn = tf.estimator.inputs.numpy_input_fn(
-        x={WORDS_FEATURE: x_test}, y=y_test, num_epochs=1, shuffle=False)
+        x={config.WORDS_FEATURE: x_test}, y=y_test, num_epochs=1, shuffle=False)
     predictions = classifier.predict(input_fn=test_input_fn)
     y_predicted = np.array(list(p['class'] for p in predictions))
     y_predicted = y_predicted.reshape(np.array(y_test).shape)

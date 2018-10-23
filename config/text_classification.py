@@ -1,0 +1,12 @@
+
+
+
+FLAGS = None
+
+MAX_DOCUMENT_LENGTH = 10
+EMBEDDING_SIZE = 50
+n_words = 0
+MAX_LABEL = 15
+WORDS_FEATURE = 'words'  # Name of the input words feature.
+SAVE_EVERY_N_STEPS = 100
+TRAINING_STEPS = 10000
