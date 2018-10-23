@@ -32,7 +32,7 @@ EMBEDDING_SIZE = 50
 n_words = 0
 MAX_LABEL = 15
 WORDS_FEATURE = 'words'  # Name of the input words feature.
-
+SAVE_EVERY_N_STEPS = 100
 TRAINING_STEPS = 10000
 
 
@@ -58,8 +58,14 @@ def estimator_spec_for_softmax_classification(logits, labels, mode):
         'accuracy':
             tf.metrics.accuracy(labels=labels, predictions=predicted_classes)
     }
+
+    summary_hook = tf.train.SummarySaverHook(
+        SAVE_EVERY_N_STEPS,
+        output_dir='/tmp/tf',
+        summary_op=tf.summary.merge_all())
+
     return tf.estimator.EstimatorSpec(
-        mode=mode, loss=loss, eval_metric_ops=eval_metric_ops)
+        mode=mode, loss=loss, eval_metric_ops=eval_metric_ops, training_hooks=[summary_hook])
 
 
 def bag_of_words_model(features, labels, mode):
