@@ -1,8 +1,9 @@
 import tensorflow as tf
 from estimators.estimator import estimator_spec_for_softmax_classification
+import config.text_classification as config
 
 
-def bag_of_words_model(features, labels, mode, config):
+def bag_of_words_model(features, labels, mode):
     """A bag-of-words model. Note it disregards the word order in the text."""
     bow_column = tf.feature_column.categorical_column_with_identity(
         config.WORDS_FEATURE, num_buckets=config.n_words)
@@ -16,7 +17,7 @@ def bag_of_words_model(features, labels, mode, config):
         logits=logits, labels=labels, mode=mode, config=config)
 
 
-def gru_model(features, labels, mode, config):
+def gru_model(features, labels, mode):
     """RNN model to predict from sequence of words to a class."""
     # Convert indexes of words into embeddings.
     # This creates embeddings matrix of [n_words, EMBEDDING_SIZE] and then
@@ -44,7 +45,7 @@ def gru_model(features, labels, mode, config):
         logits=logits, labels=labels, mode=mode, config=config)
 
 
-def lstm_model(features, labels, mode, config):
+def lstm_model(features, labels, mode):
     """RNN model to predict from sequence of words to a class."""
     # Convert indexes of words into embeddings.
     # This creates embeddings matrix of [n_words, EMBEDDING_SIZE] and then
